@@ -1,1 +1,1 @@
-# A2_IC
+# Introducao a Computacao_A2

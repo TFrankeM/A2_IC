@@ -213,7 +213,7 @@ def grafico3(planilha, carteira, carteira_cotacoes):
     grafico_3.style = 13
     grafico_3.grouping = "percentStacked"
     grafico_3.overlap = 100
-    grafico_3.title = "Porcentagem investida em cada ativo em relação ao total da carteira"
+    grafico_3.title = "Porcentagem investida em cada ativo em comparação ao valor da carteira"
 
     planilha.add_chart(grafico_3, "G16")
 

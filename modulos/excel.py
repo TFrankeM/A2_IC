@@ -1,9 +1,10 @@
 
 from openpyxl import Workbook
-from openpyxl.styles import Font, Fill, Color, NamedStyle, Border, Side, Alignment
+from openpyxl.styles import Font, PatternFill, Fill, Color, NamedStyle, Border, Side, Alignment
 from openpyxl.chart import BarChart, PieChart, DoughnutChart, Reference 
 from openpyxl.chart.series import DataPoint
 from openpyxl.drawing.image import Image
+from copy import deepcopy
 import qrcode
 
         # <<<< EXCEL >>>>
@@ -19,18 +20,30 @@ def criar_arquivo():
     return arquivo_excel, planilha
 
     # APARÊNCIA DAS CÉLULAS E LETRAS
+# Aparência para o fundo do excel
+def aparencia_arquivo(planilha):
+    fundo = PatternFill(start_color='DBF3D9',
+                   end_color='DBF3D9',
+                   fill_type='solid')
+    planilha["A1"].fill = fundo
+    for linha in planilha["A1:CC100"]:
+        for celula in linha:
+            celula.fill = fundo
+
+
 # Aparência para os cabeçalhos das tabelas
 def aparencia_cabecalho(celula):
     celula.font = Font(bold=True, size=15)
     bd = Side(style='thick', color="000000")
     celula.border = Border(left=bd, top=bd, right=bd, bottom=bd)
     celula.alignment = Alignment(horizontal='center', vertical="center")
-
+    celula.fill = PatternFill(start_color='BCECF0', end_color='BCECF0', fill_type='solid')
 
 # Criando aparência para as informações das tabelas
 def aparencia_tabela(celula):
     celula.font = Font(size=12)
     celula.alignment = Alignment(horizontal='center', vertical="center")
+    celula.fill = PatternFill(start_color='BCECF0', end_color='BCECF0', fill_type='solid')
 
 
 # Largura das células
@@ -39,6 +52,8 @@ def largura(planilha):
     planilha.column_dimensions['C'].width = 22
     planilha.column_dimensions['D'].width = 22
     planilha.column_dimensions['E'].width = 22
+    planilha.column_dimensions['P'].width = 4
+    planilha.column_dimensions['Q'].width = 22
 
     # TABELAS DAS MOEDAS E DAS AÇÕES
 
@@ -167,23 +182,38 @@ def grafico2(planilha, carteira, carteira_cotacoes):
 def grafico3(planilha, carteira, carteira_cotacoes):
         # 3º Gráfico - Quantidade de ações X Valor Acumulado
     # Gambiarra: plotar os dados novamente em uma coluna distante do dashboard, mas agora com as colunas desejadas juntas:
+    # Nome ativo
     for posicao, item in enumerate(carteira[0]): 
         planilha[f'CB{posicao+3}'] = item
     for posicao, item in enumerate(carteira[2]): 
         planilha[f'CB{posicao+len(carteira[0])+3}'] = item
-    planilha['CC2'].value = 'TOTAL (R$)'
+    planilha['CC2'].value = 'Total (R$) do ativo'
+    # Quantidade e total da carteira
     for posicao, item in enumerate(Total_moeda(carteira, carteira_cotacoes)): 
         planilha[f'CC{posicao+3}'] = round(item, 2)
+        planilha[f'CD{posicao+3}'] = round(Total_carteira(planilha, carteira, carteira_cotacoes),2)
     for posicao, item in enumerate(Total_acao(carteira, carteira_cotacoes)):
         planilha[f'CC{posicao+len(carteira[0])+3}'] = round(item, 2)
+        planilha[f'CD{posicao+len(carteira[0])+3}'] = round(Total_carteira(planilha, carteira, carteira_cotacoes),2)
+        planilha['CD2'].value = 'Valor da Carteira'
     # Adicionando o gráfico
-    grafico_3 = DoughnutChart()
+    # Gráfico intermediário com barras verticais que recebe as especificaçãos
+    grafico_intermediario = BarChart()
+    grafico_intermediario.type = "col"
+    grafico_intermediario.style = 26
+    grafico_intermediario.y_axis.title = 'Porcentagem'
+    grafico_intermediario.x_axis.title = 'Ativos'
     labels = Reference(planilha, min_col=80, min_row=3, max_row=len(carteira[0])+len(carteira[2])+3)
-    data = Reference(planilha, min_col=81, min_row=2, max_row=len(carteira[0])+len(carteira[2])+2)
-    grafico_3.add_data(data, titles_from_data=True)
-    grafico_3.set_categories(labels)
-    grafico_3.title = "Total investido em cada moeda e ação"
-    grafico_3.style = 26
+    data = Reference(planilha, min_col=81, max_col=82, min_row=2, max_row=len(carteira[0])+len(carteira[2])+2)
+    grafico_intermediario.add_data(data, titles_from_data=True)
+    grafico_intermediario.set_categories(labels)
+    # Gráfico definitivo com barras hotizontais a ser plotado
+    grafico_3 = deepcopy(grafico_intermediario)
+    grafico_3.type = "bar"
+    grafico_3.style = 13
+    grafico_3.grouping = "percentStacked"
+    grafico_3.overlap = 100
+    grafico_3.title = "Porcentagem investida em cada ativo em relação ao total da carteira"
 
     planilha.add_chart(grafico_3, "G16")
 
@@ -217,12 +247,16 @@ def Total_carteira(planilha, carteira, carteira_cotacoes):
     img_valor_carteira = qrcode.make(f'Esta carteira contem R${valor_carteira:.2f}', box_size = 3.9)
     img_valor_carteira.save('Valor da Carteira.png')
         # Adicionar uma legenda
-    planilha[f'Q2'] = 'VALOR DA CARTEIRA:'
+    planilha['Q2'] = 'VALOR DA CARTEIRA:'
+    planilha['Q2'].font = Font(size=12, bold=True)
+    planilha['Q2'].alignment = Alignment(horizontal='center', vertical="center")
+
         # Adicionar a imagem no excel
     img = Image('Valor da Carteira.png')
+    img.width = 160
+    img.height = 160
     planilha.add_image(img, 'Q3')
-
-
+    return(valor_carteira)
 
     # SALVAR O EXCEL
 def salvar_excel(arquivo_excel, nome_excel):
@@ -234,6 +268,7 @@ def salvar_excel(arquivo_excel, nome_excel):
 def dashboard(carteira, carteira_cotacoes, nome_excel):
     arquivo_excel, planilha = criar_arquivo()
 
+    aparencia_arquivo(planilha)
     celulas_fixas(planilha, carteira)
     largura(planilha)
 

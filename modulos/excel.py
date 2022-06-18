@@ -146,7 +146,7 @@ def Plotar_acoes(planilha, carteira, carteira_cotacoes):
 def grafico1(planilha, carteira):
         # 1º Gráfico - Quantidade de ações X Valor Acumulado
     grafico_1 = PieChart()
-    grafico_1.style = 26
+    grafico_1.style = 18
     labels = Reference(planilha, min_col = 2, min_row = len(carteira[0])+6, max_row = len(carteira[2])+len(carteira[0])+5)                   
     data = Reference(planilha, min_col = 5, min_row = len(carteira[0])+5, max_row = len(carteira[2])+len(carteira[0])+5)
     grafico_1.add_data(data, titles_from_data = True) 
@@ -168,7 +168,7 @@ def grafico2(planilha, carteira, carteira_cotacoes):
     # Adicionando o gráfico
     grafico_2 = BarChart()
     grafico_2.type = "col"
-    grafico_2.style = 26
+    grafico_2.style = 18
     labels = Reference(planilha, min_col = 2, min_row = 3, max_row = len(carteira[0])+2)                   
     data = Reference(planilha, min_col = 77, min_row = 2, max_row = len(carteira[0])+2, max_col = 78)
     grafico_2.add_data(data, titles_from_data = True) 
@@ -210,7 +210,7 @@ def grafico3(planilha, carteira, carteira_cotacoes):
     # Gráfico definitivo com barras hotizontais a ser plotado
     grafico_3 = deepcopy(grafico_intermediario)
     grafico_3.type = "bar"
-    grafico_3.style = 13
+    grafico_3.style = 18
     grafico_3.grouping = "percentStacked"
     grafico_3.overlap = 100
     grafico_3.title = "Porcentagem investida em cada ativo em comparação ao valor total da carteira"

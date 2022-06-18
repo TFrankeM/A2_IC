@@ -1,0 +1,99 @@
+@font-face {
+  font-family: 'Open Sans';
+  src: url('fontes/OpenSans-VariableFont_wdth\,wght.ttf') format('truetype');
+}
+
+p {
+  margin: 0 365px 10px;
+  font-size: xx-small;
+}
+* {
+  font-family: 'Verdana';
+}
+
+html{
+  height: 100%;
+  background-color: #000000
+}
+
+hr {
+  border: 0;
+  height: 5px;
+  background-image: linear-gradient(to right, transparent, #F3F7D4, transparent); 
+}
+
+body {
+  background-color: #000000;
+  margin: 0;
+}
+
+header {
+  color: #AB8602;
+  background-color: #000000;
+  padding: 5vh 10vw 0 10vw;
+}
+
+h1 {
+  margin: 0;
+  font-size: 3em;
+}
+
+h2 {
+  color: #AB8602;
+  padding: 0 45vw;
+}
+
+h3 {
+  margin-top: 0;
+  font-size: 1.5em
+}
+
+table {
+    width: 45vw;
+    padding: 20px;
+    height: auto;
+    margin: 5vh 25vw;
+    background-color: #000000;
+    align-items: center;
+    table-layout: fixed;
+    color: #FFFFFF
+}
+
+th {
+  font-size: 1.8em;
+  text-align: center;
+}
+
+td {
+  text-align: center;
+}
+
+h1, h3 {
+  text-shadow: 2px 2px 4px #000000;
+}
+
+h2, th , .navbar a{
+  text-shadow: 0.5px 0.5px 2px rgba(0, 0, 0, 0.3);
+}
+
+.navbar {
+  overflow: hidden;
+  display: flex;
+  justify-content: left;
+}
+
+.navbar a {
+  float: left;
+  color: #FFFFFF;
+  text-align: left;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: normal;
+}
+
+
+
+.navbar a.active {
+    color:#FF0000;
+} 

@@ -191,11 +191,11 @@ def grafico3(planilha, carteira, carteira_cotacoes):
     # Quantidade e total da carteira
     for posicao, item in enumerate(Total_moeda(carteira, carteira_cotacoes)): 
         planilha[f'CC{posicao+3}'] = round(item, 2)
-        planilha[f'CD{posicao+3}'] = round(Total_carteira(planilha, carteira, carteira_cotacoes),2)
+        planilha[f'CD{posicao+3}'] = round(Total_carteira(planilha, carteira, carteira_cotacoes)-item,2)
     for posicao, item in enumerate(Total_acao(carteira, carteira_cotacoes)):
         planilha[f'CC{posicao+len(carteira[0])+3}'] = round(item, 2)
-        planilha[f'CD{posicao+len(carteira[0])+3}'] = round(Total_carteira(planilha, carteira, carteira_cotacoes),2)
-        planilha['CD2'].value = 'Valor da Carteira'
+        planilha[f'CD{posicao+len(carteira[0])+3}'] = round(Total_carteira(planilha, carteira, carteira_cotacoes)-item,2)
+        planilha['CD2'].value = 'Total outros ativos'
     # Adicionando o gráfico
     # Gráfico intermediário com barras verticais que recebe as especificaçãos
     grafico_intermediario = BarChart()
@@ -213,7 +213,7 @@ def grafico3(planilha, carteira, carteira_cotacoes):
     grafico_3.style = 13
     grafico_3.grouping = "percentStacked"
     grafico_3.overlap = 100
-    grafico_3.title = "Porcentagem investida em cada ativo em comparação ao valor da carteira"
+    grafico_3.title = "Porcentagem investida em cada ativo em comparação ao valor total da carteira"
 
     planilha.add_chart(grafico_3, "G16")
 

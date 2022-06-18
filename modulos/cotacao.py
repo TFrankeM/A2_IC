@@ -11,22 +11,27 @@ def cotacao(carteira):
     # A lista abaixo armazena as cotações das moedas
     cotacoes_moedas = []
     for nome_moeda in carteira[0]:
-        # Para encontrar a cotação da moeda, o nome dela deve ser seguido por 'BRX=X' exceto quando a moeda for o Real
-        if nome_moeda != "BRL":
-            nome_moedas = yf.Ticker(f"{nome_moeda}BRX=X ")
+        # Se a moeda tem nome diferente de "BRL" ou "BRL=X", pesquisamos a cotação
+        if nome_moeda != "BRL" and nome_moeda != "BRL=X":
+            nome_moedas = yf.Ticker(nome_moeda)
             informacoes = nome_moedas.info
-            # Pega a cotação da moeda e armazena em uma lista
-            cotacoes_moedas.append(informacoes['regularMarketPrice'])
+            # Caso a moeda não exista ou não seja encontrada, adiciona-se zero na lista
+            if informacoes['regularMarketPrice'] == None:
+                cotacoes_moedas.append(0)
+            # Caso a moeda seja encontrada, pega a cotação da moeda e armazena na lista
+            else:
+                cotacoes_moedas.append(informacoes['regularMarketPrice'])
+        # Se a moeda for o Real, adicionamos 1
         else:
             cotacoes_moedas.append(1)
-
+    # Adicionar as cotações em uma outra lista que será devolvida para a interface 
     cotacoes_carteira.append(cotacoes_moedas)
 
         # Cotação das ações
     # A lista abaixo armazena as cotações das ações
     cotacoes_acoes = []
     for nome_acao in carteira[2]:
-        empresa = yf.Ticker(f"{nome_acao}")
+        empresa = yf.Ticker(nome_acao)
         informacoes = empresa.info
         moeda = informacoes['currency']
         valor_acao = informacoes['regularMarketPrice']
@@ -35,12 +40,16 @@ def cotacao(carteira):
             cotacoes_acoes.append(valor_acao)
         # Se a ação da empresa não está em real, é preciso multiplicar a cotação da ação pela cotação da moeda da ação
         if moeda != "BRL":
-            nome_para_buscar = (f"{moeda}BRL=X")
-            info_da_moeda_buscar = yf.Ticker(nome_para_buscar)
-            info_moeda = info_da_moeda_buscar.info
-            cotacao_em_real = info_moeda['regularMarketPrice']
-            valor_acao_em_real = valor_acao * cotacao_em_real
-            cotacoes_acoes.append(round(valor_acao_em_real,2))
-
+            # Se a ação não foi encontrada, adicionamos 0
+            if valor_acao == None:
+                cotacoes_acoes.append(0)
+            else:    
+                nome_para_buscar = (f"{moeda}BRL=X")
+                info_da_moeda_buscar = yf.Ticker(nome_para_buscar)
+                info_moeda = info_da_moeda_buscar.info
+                cotacao_em_real = info_moeda['regularMarketPrice']
+                valor_acao_em_real = valor_acao * cotacao_em_real
+                cotacoes_acoes.append(round(valor_acao_em_real,2))
+    # Adicionar as cotações em uma outra lista que será devolvida para a interface
     cotacoes_carteira.append(cotacoes_acoes)
     return cotacoes_carteira

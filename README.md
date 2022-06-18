@@ -8,4 +8,4 @@ que contém o valor total da carteira, ou seja a soma de todos os ativos dos doi
 
 # Segue abaixo o link com as nossas carteiras
 
-https://tfrankem.github.io/A2_IC/carteira_1.html
+https://tfrankem.github.io/A2_IC/index.html
